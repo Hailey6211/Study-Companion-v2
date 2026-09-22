@@ -1,28 +1,95 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#8b7cf6" />
-  <title>Study Bloom | Study Companion</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <div id="loginScreen" class="login-screen hidden">
-    <div class="login-art"><div class="bubble b1"></div><div class="bubble b2"></div><span class="login-star">✦</span><div class="brand-mark">✿</div><h1>Study Bloom</h1><p>A gentle space to learn, plan, and grow.</p></div>
-    <form id="loginForm" class="login-card"><span class="eyebrow">WELCOME BACK</span><h2>Ready to bloom?</h2><p class="muted">Sign in to your personal study space.</p><label>Email<input id="loginEmail" type="email" placeholder="you@example.com" required></label><label>Password<input type="password" placeholder="••••••••" required></label><button class="primary wide">Sign in <span>→</span></button></form>
-  </div>
-  <div id="app" class="app">
-    <aside class="sidebar"><div class="logo"><span>✿</span><strong>Study Bloom</strong></div><div class="profile"><div class="avatar" id="avatar">H</div><div><b id="userName">Hailey</b><small>Student account</small></div><button id="logoutBtn" class="icon-btn" title="Sign out">↪</button></div><nav id="nav"><button class="nav-item active" data-page="dashboard">⌂ <span>Dashboard</span></button><button class="nav-item" data-page="calendar">▣ <span>Calendar</span></button><button class="nav-item" data-page="classes">▤ <span>My classes</span></button><button class="nav-item" data-page="flashcards">◇ <span>Flashcards</span></button><button class="nav-item" data-page="notes">▱ <span>Notes</span></button><button class="nav-item" data-page="inbox">✉ <span>Inbox <em id="inboxBadge">0</em></span></button></nav><div class="sidebar-bottom"><button id="themeBtn" class="soft-btn">☾ <span>Dark mode</span></button><button id="themePickerBtn" class="soft-btn">● <span>Choose color</span></button></div></aside>
-    <main class="main"><header class="topbar"><div><span class="eyebrow" id="dateLabel">TODAY</span><h1 id="pageTitle">Good morning, Hailey <span>✦</span></h1></div><button class="round-btn" id="quickAdd" title="Quick add">+</button></header><section id="pageContent"></section></main>
-  </div>
-  <div id="modal" class="modal hidden"><div class="modal-card"><button class="close" id="closeModal">×</button><div id="modalContent"></div></div></div>
-  <div id="toast" class="toast"></div>
-  <script src="app.js"></script>
-  <script src="recovery.js"></script>
-  <script src="tools.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Study Bloom</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fredoka:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="loginScreen" class="login-screen hidden">
+      <div class="login-art">
+        <div class="bubble b1"></div>
+        <div class="bubble b2"></div>
+        <span class="login-star">✦</span>
+        <div class="brand-mark">✿</div>
+        <h1>Study Bloom</h1>
+        <p>A gentle space to learn, plan, and grow.</p>
+      </div>
+
+      <form id="loginForm" class="login-card">
+        <span class="eyebrow">WELCOME BACK</span>
+        <h2>Ready to bloom?</h2>
+        <p class="muted">Sign in to your personal study space.</p>
+        <label>
+          Email
+          <input id="loginEmail" type="email" placeholder="you@example.com" required />
+        </label>
+        <label>
+          Password
+          <input type="password" placeholder="••••••••" required />
+        </label>
+        <button class="primary wide" type="submit">Sign in →</button>
+      </form>
+    </div>
+
+    <div id="app" class="app">
+      <aside class="sidebar">
+        <div class="logo"><span>✿</span><strong>Study Bloom</strong></div>
+
+        <div class="profile">
+          <div class="avatar" id="avatar">H</div>
+          <div>
+            <b id="userName">Hailey</b>
+            <small>Student account</small>
+          </div>
+          <button id="logoutBtn" class="icon-btn" title="Sign out">↪</button>
+        </div>
+
+        <nav class="nav">
+          <button class="nav-item active" data-page="dashboard">⌂ <span>Dashboard</span></button>
+          <button class="nav-item" data-page="calendar">▣ <span>Calendar</span></button>
+          <button class="nav-item" data-page="classes">▤ <span>My classes</span></button>
+          <button class="nav-item" data-page="flashcards">◇ <span>Flashcards</span></button>
+          <button class="nav-item" data-page="notes">▱ <span>Notes</span></button>
+          <button class="nav-item" data-page="inbox">✉ <span>Inbox</span></button>
+        </nav>
+
+        <div class="sidebar-tools">
+          <button class="tool-button" id="calculatorButton">▦ Calculator</button>
+          <button class="tool-button" id="colorButton">● Pastel color</button>
+        </div>
+
+        <div class="sidebar-bottom">
+          <button id="themeBtn" class="soft-btn">☾ <span>Dark mode</span></button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <span class="eyebrow" id="dateLabel">TODAY</span>
+            <h1 id="pageTitle">Good morning, Hailey <span>✦</span></h1>
+          </div>
+          <button class="round-btn" id="quickAdd" title="Quick add">+</button>
+        </header>
+
+        <section id="pageContent"></section>
+      </main>
+    </div>
+
+    <div id="modal" class="modal hidden">
+      <div class="modal-card">
+        <button class="close" id="closeModal">×</button>
+        <div id="modalContent"></div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="app.js"></script>
+  </body>
 </html>
