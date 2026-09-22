@@ -11,11 +11,11 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="loginScreen" class="login-screen">
+  <div id="loginScreen" class="login-screen hidden">
     <div class="login-art"><div class="bubble b1"></div><div class="bubble b2"></div><span class="login-star">✦</span><div class="brand-mark">✿</div><h1>Study Bloom</h1><p>A gentle space to learn, plan, and grow.</p></div>
-    <form id="loginForm" class="login-card"><span class="eyebrow">WELCOME BACK</span><h2>Ready to bloom?</h2><p class="muted">Sign in to your personal study space.</p><label>Email<input id="loginEmail" type="email" placeholder="you@example.com" required></label><label>Password<input type="password" placeholder="••••••••" required></label><button class="primary wide">Sign in <span>→</span></button><small>This demo saves your account on this device.</small></form>
+    <form id="loginForm" class="login-card"><span class="eyebrow">WELCOME BACK</span><h2>Ready to bloom?</h2><p class="muted">Sign in to your personal study space.</p><label>Email<input id="loginEmail" type="email" placeholder="you@example.com" required></label><label>Password<input type="password" placeholder="••••••••" required></label><button class="primary wide">Sign in <span>→</span></button></form>
   </div>
-  <div id="app" class="app hidden">
+  <div id="app" class="app">
     <aside class="sidebar"><div class="logo"><span>✿</span><strong>Study Bloom</strong></div><div class="profile"><div class="avatar" id="avatar">H</div><div><b id="userName">Hailey</b><small>Student account</small></div><button id="logoutBtn" class="icon-btn" title="Sign out">↪</button></div><nav id="nav"><button class="nav-item active" data-page="dashboard">⌂ <span>Dashboard</span></button><button class="nav-item" data-page="calendar">▣ <span>Calendar</span></button><button class="nav-item" data-page="classes">▤ <span>My classes</span></button><button class="nav-item" data-page="flashcards">◇ <span>Flashcards</span></button><button class="nav-item" data-page="notes">▱ <span>Notes</span></button><button class="nav-item" data-page="inbox">✉ <span>Inbox <em id="inboxBadge">0</em></span></button></nav><div class="sidebar-bottom"><button id="themeBtn" class="soft-btn">☾ <span>Dark mode</span></button><button id="themePickerBtn" class="soft-btn">● <span>Choose color</span></button></div></aside>
     <main class="main"><header class="topbar"><div><span class="eyebrow" id="dateLabel">TODAY</span><h1 id="pageTitle">Good morning, Hailey <span>✦</span></h1></div><button class="round-btn" id="quickAdd" title="Quick add">+</button></header><section id="pageContent"></section></main>
   </div>
