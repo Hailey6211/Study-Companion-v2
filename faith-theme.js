@@ -1,10 +1,13 @@
 (() => {
   const setFaithMessage = () => {
     const heading = document.querySelector('.welcome h2');
-    if (heading) heading.textContent = 'Psalms 91:2';
+    if (heading && heading.textContent !== 'Psalms 91:2') {
+      heading.textContent = 'Psalms 91:2';
+    }
+
     const plant = document.querySelector('.welcome .plant');
     if (plant) {
-      plant.textContent = '✝';
+      if (plant.textContent !== '✝') plant.textContent = '✝';
       plant.setAttribute('aria-label', 'cross');
       plant.title = 'Psalms 91:2';
     }
@@ -32,5 +35,5 @@
   const observer = new MutationObserver(setFaithMessage);
   observer.observe(document.body, { childList: true, subtree: true });
   window.addEventListener('load', setFaithMessage);
-  setTimeout(setFaithMessage, 0);
+  setFaithMessage();
 })();
