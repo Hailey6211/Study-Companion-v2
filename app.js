@@ -117,7 +117,7 @@ function openColorPicker() {
     <div class="swatch-grid">${swatches}</div>
   `);
 
-  $$('[data-palette]').forEach((button) => {
+  $$('.swatch').forEach((button) => {
     button.onclick = () => {
       applyPalette(button.dataset.palette);
       closeModal();
@@ -157,7 +157,7 @@ function openCalculator() {
       </div>
     `);
 
-    $$('[data-calc]').forEach((button) => {
+    $$('.calc-btn').forEach((button) => {
       button.onclick = () => {
         const key = button.dataset.calc;
         if (key === 'C') {
@@ -188,7 +188,8 @@ function allAssignments() {
     (classItem.assignments || []).map((assignment) => ({
       ...assignment,
       className: classItem.name,
-      classColor: classItem.color || '#8b7cf6'
+      classColor: classItem.color || '#8b7cf6',
+      classId: classItem.id
     }))
   );
 }
@@ -243,6 +244,7 @@ function renderDashboard() {
             <input type="checkbox" data-task="${index}" ${task.done ? 'checked' : ''}>
             <span>${esc(task.text)}</span>
             <small>${esc(task.tag || 'General')}</small>
+            <button type="button" class="delete-btn small" data-delete-kind="task" data-index="${index}">Delete</button>
           </label>
         `).join('') : '<div class="empty">No tasks yet.</div>'}
       </div>
@@ -285,11 +287,22 @@ function renderCalendar() {
           <span class="event" style="background:${assignment.classColor || '#8b7cf6'};">
             <span>${esc(assignment.title)}</span>
             <small>${esc(assignment.className)}</small>
+            <button type="button" class="delete-btn tiny" data-delete-kind="assignment" data-class-index="${(data.classes || []).findIndex((classItem) => classItem.id === assignment.classId)}" data-assignment-index="${((data.classes || []).find((classItem) => classItem.id === assignment.classId)?.assignments || []).findIndex((item) => item.title === assignment.title && item.dueDate === assignment.dueDate)}">×</button>
           </span>
         `).join('')}
       </div>
     `;
   }
+
+  const upcoming = (data.classes || []).flatMap((classItem, classIndex) =>
+    (classItem.assignments || []).map((assignment, assignmentIndex) => `
+      <div class="task">
+        <span>${esc(assignment.title)}</span>
+        <small>${esc(classItem.name)} · ${assignment.dueDate}</small>
+        <button type="button" class="delete-btn small" data-delete-kind="assignment" data-class-index="${classIndex}" data-assignment-index="${assignmentIndex}">Delete</button>
+      </div>
+    `)
+  ).join('');
 
   return `
     <div class="page-head">
@@ -313,15 +326,7 @@ function renderCalendar() {
 
       <div class="card">
         <div class="section-title"><h3>Upcoming</h3></div>
-        ${assignments.length ? assignments
-          .sort((a, b) => a.dueDate.localeCompare(b.dueDate))
-          .slice(0, 8)
-          .map((assignment) => `
-            <div class="task">
-              <span>${esc(assignment.title)}</span>
-              <small>${esc(assignment.className)} · ${assignment.dueDate}</small>
-            </div>
-          `).join('') : '<div class="empty">No assignments yet.</div>'}
+        ${upcoming || '<div class="empty">No assignments yet.</div>'}
       </div>
     </div>
   `;
@@ -334,14 +339,18 @@ function renderClasses() {
       <button class="primary" data-action="class">+ New class</button>
     </div>
     <div class="grid three">
-      ${(data.classes || []).map((classItem) => `
+      ${(data.classes || []).map((classItem, classIndex) => `
         <div class="card class-card" style="border-left-color:${classItem.color || '#8b7cf6'}">
-          <h3>${esc(classItem.name)}</h3>
+          <div class="section-title">
+            <h3>${esc(classItem.name)}</h3>
+            <button type="button" class="delete-btn small" data-delete-kind="class" data-class-index="${classIndex}">Delete</button>
+          </div>
           <p>${esc(classItem.teacher || 'Teacher')}</p>
-          ${(classItem.assignments || []).length ? (classItem.assignments || []).map((assignment) => `
+          ${(classItem.assignments || []).length ? (classItem.assignments || []).map((assignment, assignmentIndex) => `
             <div class="task">
               <span>${esc(assignment.title)}</span>
               <small>${esc(assignment.type || 'Assignment')} · ${assignment.dueDate}</small>
+              <button type="button" class="delete-btn small" data-delete-kind="assignment" data-class-index="${classIndex}" data-assignment-index="${assignmentIndex}">Delete</button>
             </div>
           `).join('') : '<div class="empty small">No assignments yet.</div>'}
           <div style="margin-top:12px;">
@@ -364,7 +373,7 @@ function renderFlashcards() {
         <div class="card deck-card">
           <div class="section-title">
             <h3>${esc(set.name)}</h3>
-            <span class="pill purple">${(set.cards || []).length}</span>
+            <button type="button" class="delete-btn small" data-delete-kind="flashcard" data-index="${index}">Delete</button>
           </div>
           <p class="muted">${(set.cards || []).length} cards in this set.</p>
           <div class="deck-actions">
@@ -389,7 +398,7 @@ function renderNotes() {
         <div class="card note-card">
           <div class="section-title">
             <h3>${esc(note.title)}</h3>
-            <button class="link-btn" data-delete-note="${index}">Delete</button>
+            <button type="button" class="delete-btn small" data-delete-kind="note" data-index="${index}">Delete</button>
           </div>
           <p>${esc(note.body)}</p>
         </div>
@@ -404,16 +413,21 @@ function renderInbox() {
       <h2>Inbox</h2>
       <button class="primary" data-action="message">+ New message</button>
     </div>
-    <div class="card">${(data.messages || []).map((message) => `
-      <div class="message">
-        <div class="avatar">${esc((message.from || 'A')[0].toUpperCase())}</div>
-        <div class="message-copy">
-          <b>${esc(message.from || 'Unknown')}</b>
-          <p>${esc(message.body || '')}</p>
+    <div class="card">
+      ${(data.messages || []).map((message, index) => `
+        <div class="message">
+          <div class="avatar">${esc((message.from || 'A')[0].toUpperCase())}</div>
+          <div class="message-copy">
+            <b>${esc(message.from || 'Unknown')}</b>
+            <p>${esc(message.body || '')}</p>
+          </div>
+          <div class="message-meta">
+            <small>${esc(message.time || 'Now')}</small>
+            <button type="button" class="delete-btn tiny" data-delete-kind="message" data-index="${index}">Delete</button>
+          </div>
         </div>
-        <small>${esc(message.time || 'Now')}</small>
-      </div>
-    `).join('') || '<div class="empty">No messages yet.</div>'}</div>
+      `).join('') || '<div class="empty">No messages yet.</div>'}
+    </div>
   `;
 }
 
@@ -456,9 +470,7 @@ function openSetEditor(index, addCardMode = false) {
     openModal(`
       <h2>${existingSet ? 'Edit flashcard set' : 'Create flashcard set'}</h2>
       <form id="setEditorForm" class="sheet-form">
-        <label>Set name
-          <input name="name" value="${esc(existingSet ? existingSet.name : '')}" required>
-        </label>
+        <label>Set name< input name="name" value="${esc(existingSet ? existingSet.name : '')}" required ></label>
         <div class="flashcard-editor-list">
           ${cards.map((card, cardIndex) => `
             <div class="flashcard-editor-row">
@@ -466,12 +478,8 @@ function openSetEditor(index, addCardMode = false) {
                 <strong>Card ${cardIndex + 1}</strong>
                 <button class="link-btn remove-card" type="button" data-remove-card="${cardIndex}">Remove</button>
               </div>
-              <label>Front / question
-                <textarea name="front-${cardIndex}" data-front="${cardIndex}">${esc(card.front)}</textarea>
-              </label>
-              <label>Back / answer
-                <textarea name="back-${cardIndex}" data-back="${cardIndex}">${esc(card.back)}</textarea>
-              </label>
+              <label>Front / question<textarea name="front-${cardIndex}" data-front="${cardIndex}">${esc(card.front)}</textarea></label>
+              <label>Back / answer<textarea name="back-${cardIndex}" data-back="${cardIndex}">${esc(card.back)}</textarea></label>
             </div>
           `).join('')}
         </div>
@@ -605,7 +613,14 @@ function assignmentForm(date, classId) {
 }
 
 function bindEvents() {
-  $$('[data-page]').forEach((button) => {
+  $$('.nav-item').forEach((button) => {
+    button.onclick = () => {
+      currentPage = button.dataset.page;
+      renderPage();
+    };
+  });
+
+  $$('.nav-item').forEach((button) => {
     button.onclick = () => {
       currentPage = button.dataset.page;
       renderPage();
@@ -623,12 +638,45 @@ function bindEvents() {
     };
   });
 
-  $$('[data-delete-note]').forEach((button) => {
+  $$('[data-delete-kind]').forEach((button) => {
     button.onclick = () => {
-      const index = Number(button.dataset.deleteNote);
-      data.notes.splice(index, 1);
-      save();
-      renderPage();
+      const kind = button.dataset.deleteKind;
+      const index = Number(button.dataset.index ?? -1);
+      const classIndex = Number(button.dataset.classIndex ?? -1);
+      const assignmentIndex = Number(button.dataset.assignmentIndex ?? -1);
+
+      const doDelete = () => {
+        if (kind === 'task') {
+          data.tasks.splice(index, 1);
+        } else if (kind === 'flashcard') {
+          data.flashcards.splice(index, 1);
+        } else if (kind === 'class') {
+          data.classes.splice(classIndex, 1);
+        } else if (kind === 'assignment') {
+          if (classIndex >= 0 && assignmentIndex >= 0 && data.classes[classIndex]) {
+            data.classes[classIndex].assignments.splice(assignmentIndex, 1);
+          }
+        } else if (kind === 'note') {
+          data.notes.splice(index, 1);
+        } else if (kind === 'message') {
+          data.messages.splice(index, 1);
+        }
+
+        save();
+        renderPage();
+        toast('Deleted.');
+      };
+
+      const labelMap = {
+        task: 'this task',
+        flashcard: 'this flashcard set',
+        class: 'this class',
+        assignment: 'this assignment',
+        note: 'this note',
+        message: 'this message'
+      };
+
+      if (window.confirm(`Delete ${labelMap[kind] || 'this item'}?`)) doDelete();
     };
   });
 
