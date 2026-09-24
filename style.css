@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&display=swap');
+
 :root {
   --primary: #ad98ea;
   --primary-dark: #7765c7;
@@ -447,7 +449,6 @@ textarea { min-height: 90px; resize: vertical; }
 .task.done span { text-decoration: line-through; color: var(--muted); }
 .task small { color: var(--muted); }
 
-/* Keep destructive controls available without making every card feel crowded. */
 .delete-btn {
   width: 28px;
   height: 28px;
