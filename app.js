@@ -287,7 +287,7 @@ function renderCalendar() {
           <span class="event" style="background:${assignment.classColor || '#8b7cf6'};">
             <span>${esc(assignment.title)}</span>
             <small>${esc(assignment.className)}</small>
-            <button type="button" class="delete-btn tiny" data-delete-kind="assignment" data-class-index="${(data.classes || []).findIndex((classItem) => classItem.id === assignment.classId)}" data-assignment-index="${((data.classes || []).find((classItem) => classItem.id === assignment.classId)?.assignments || []).findIndex((item) => item.title === assignment.title && item.dueDate === assignment.dueDate)}">×</button>
+            <button type="button" class="delete-btn tiny" data-delete-kind="assignment" data-class-index="${(data.classes || []).findIndex((classItem) => classItem.id === assignment.classId)}" data-assignment-index="${(data.classes || []).find((classItem) => classItem.id === assignment.classId)?.assignments?.findIndex((item) => item.id === assignment.id) ?? 0}">Delete</button>
           </span>
         `).join('')}
       </div>
@@ -470,7 +470,7 @@ function openSetEditor(index, addCardMode = false) {
     openModal(`
       <h2>${existingSet ? 'Edit flashcard set' : 'Create flashcard set'}</h2>
       <form id="setEditorForm" class="sheet-form">
-        <label>Set name< input name="name" value="${esc(existingSet ? existingSet.name : '')}" required ></label>
+        <label>Set name<input name="name" value="${esc(existingSet ? existingSet.name : '')}" required></label>
         <div class="flashcard-editor-list">
           ${cards.map((card, cardIndex) => `
             <div class="flashcard-editor-row">
